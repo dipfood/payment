@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Sistema de Pagamentos</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i data-lucide="shield-check"></i>
+                    </div>
+                    <h1 class="header-title">Painel Administrativo</h1>
+                </div>
+                <div class="header-right">
+                    <a href="index.html" class="back-button">
+                        <i data-lucide="arrow-left"></i>
+                        Voltar ao Login
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div id="loadingContainer" class="loading-container">
+                <div class="loading-spinner-large"></div>
+                <p class="loading-text">Carregando dados...</p>
+            </div>
+
+            <div id="adminContent" style="display: none;">
+                <!-- Configurações do Sistema -->
+                <div class="admin-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i data-lucide="settings"></i>
+                                Configurações do Sistema
+                            </h2>
+                            <p class="card-description">Configure o link de pagamento externo</p>
+                        </div>
+                        <div class="card-content">
+                            <form id="configForm" class="config-form">
+                                <div class="form-group">
+                                    <label for="paymentLink">Link de Pagamento</label>
+                                    <input 
+                                        type="url" 
+                                        id="paymentLink" 
+                                        name="paymentLink" 
+                                        placeholder="https://exemplo.com/pagamento?user={USER_ID}&amount={AMOUNT}"
+                                        required
+                                    >
+                                    <small class="form-help">
+                                        Use {USER_ID} e {AMOUNT} como placeholders que serão substituídos automaticamente
+                                    </small>
+                                </div>
+                                <button type="submit" class="save-button">
+                                    <i data-lucide="save"></i>
+                                    Salvar Configuração
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reset Mensal do Sistema -->
+                <div class="admin-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i data-lucide="calendar-clock"></i>
+                                Reset Mensal do Sistema
+                            </h2>
+                            <p class="card-description">Controle do reset automático que ocorre todo dia 1º do mês</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="reset-info">
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i data-lucide="info"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <h4>Funcionamento Automático</h4>
+                                        <p>Todo dia 1º do mês, o sistema automaticamente:</p>
+                                        <ul class="reset-features">
+                                            <li>Define todas as faturas como <strong>PENDENTE</strong></li>
+                                            <li>Atualiza vencimento para <strong>dia 10 do mês atual</strong></li>
+                                            <li>Remove dados de pagamento anteriores</li>
+                                            <li>Reinicia o ciclo de cobrança</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="reset-actions">
+                                    <div class="reset-status">
+                                        <span id="lastResetInfo" class="last-reset-info" style="display: none;"></span>
+                                    </div>
+                                    <button id="manualResetButton" class="manual-reset-button">
+                                        <i data-lucide="refresh-ccw"></i>
+                                        Executar Reset Manual
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adicionar seção de gerenciamento de usuários após as configurações do sistema -->
+
+                <!-- Gerenciamento de Usuários -->
+                <div class="admin-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i data-lucide="users"></i>
+                                Gerenciamento de Usuários
+                            </h2>
+                            <p class="card-description">Criar, editar e gerenciar usuários do sistema</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="user-actions">
+                                <button id="addUserButton" class="add-user-button">
+                                    <i data-lucide="user-plus"></i>
+                                    Adicionar Usuário
+                                </button>
+                            </div>
+
+                            <div id="usersTable" class="users-table">
+                                <!-- Tabela será preenchida dinamicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gerenciamento de Faturas -->
+                <div class="admin-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i data-lucide="file-text"></i>
+                                Gerenciamento de Faturas
+                            </h2>
+                            <p class="card-description">Marque faturas como pagas ou pendentes</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="filters">
+                                <select id="statusFilter" class="filter-select">
+                                    <option value="">Todos os Status</option>
+                                    <option value="pending">Pendente</option>
+                                    <option value="paid">Pago</option>
+                                    <option value="overdue">Vencido</option>
+                                </select>
+                                <button id="refreshButton" class="refresh-button">
+                                    <i data-lucide="refresh-cw"></i>
+                                    Atualizar
+                                </button>
+                            </div>
+
+                            <div id="invoicesTable" class="invoices-table">
+                                <!-- Tabela será preenchida dinamicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="admin-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon pending">
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="pendingCount">0</div>
+                                <div class="stat-label">Pendentes</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon paid">
+                                <i data-lucide="check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="paidCount">0</div>
+                                <div class="stat-label">Pagas</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon overdue">
+                                <i data-lucide="alert-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="overdueCount">0</div>
+                                <div class="stat-label">Vencidas</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon total">
+                                <i data-lucide="dollar-sign"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalAmount">R$ 0,00</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Criação/Edição de Usuário -->
+            <div id="userModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modalTitle">Adicionar Usuário</h3>
+                        <button id="closeModal" class="close-button">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="userForm" class="user-form">
+                            <input type="hidden" id="userId" name="userId">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="userName">Nome Completo</label>
+                                    <input 
+                                        type="text" 
+                                        id="userName" 
+                                        name="userName" 
+                                        placeholder="Digite o nome completo"
+                                        required
+                                    >
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="userUsername">Nome de Usuário</label>
+                                    <input 
+                                        type="text" 
+                                        id="userUsername" 
+                                        name="userUsername" 
+                                        placeholder="Digite o nome de usuário"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="userPassword">Senha</label>
+                                    <input 
+                                        type="password" 
+                                        id="userPassword" 
+                                        name="userPassword" 
+                                        placeholder="Digite a senha"
+                                        required
+                                    >
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="userAmount">Valor da Fatura (R$)</label>
+                                    <input 
+                                        type="number" 
+                                        id="userAmount" 
+                                        name="userAmount" 
+                                        placeholder="0,00"
+                                        step="0.01"
+                                        min="0"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="userDueDate">Data de Vencimento</label>
+                                    <input 
+                                        type="date" 
+                                        id="userDueDate" 
+                                        name="userDueDate" 
+                                        required
+                                    >
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="invoiceStatus">Status da Fatura</label>
+                                    <select id="invoiceStatus" name="invoiceStatus" required>
+                                        <option value="pending">Pendente</option>
+                                        <option value="paid">Pago</option>
+                                        <option value="overdue">Vencido</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="userObservations">Observações</label>
+                                <textarea 
+                                    id="userObservations" 
+                                    name="userObservations" 
+                                    placeholder="Digite observações sobre o usuário (opcional)"
+                                    rows="3"
+                                ></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="invoiceObservations">Observações da Fatura</label>
+                                <textarea 
+                                    id="invoiceObservations" 
+                                    name="invoiceObservations" 
+                                    placeholder="Digite observações sobre a fatura (opcional)"
+                                    rows="3"
+                                ></textarea>
+                            </div>
+
+                            <div class="modal-actions">
+                                <button type="button" id="cancelButton" class="cancel-button">
+                                    Cancelar
+                                </button>
+                                <button type="submit" id="saveUserButton" class="save-user-button">
+                                    <i data-lucide="save"></i>
+                                    Salvar Usuário
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div id="messageContainer" class="message-container" style="display: none;">
+                <div id="messageContent"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
