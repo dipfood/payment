@@ -412,161 +412,190 @@ const dashboardPage = {
 
   createDashboardHTML: () => {
     document.body.innerHTML = `
-      <div class="dashboard-container">
-        <header class="dashboard-header">
-          <div class="header-content">
-            <div class="header-left">
-              <div class="header-icon">
-                <i data-lucide="credit-card"></i>
-              </div>
-              <h1 class="header-title">Sistema de Faturas</h1>
-            </div>
-            <div class="header-right">
-              <div class="user-info">
-                <i data-lucide="user"></i>
-                <span id="userName"></span>
-              </div>
-              <button class="logout-button" id="logoutButton">
-                <i data-lucide="log-out"></i>
-                Sair
-              </button>
-            </div>
-          </div>
-        </header>
-        
-        <main class="dashboard-main">
-          <!-- Seção de Boas-vindas -->
-          <div class="welcome-section">
-            <div class="welcome-card">
-              <div class="welcome-content">
-                <h2 id="welcomeMessage" class="welcome-title"></h2>
-                <p class="welcome-subtitle">Gerencie suas faturas e pagamentos</p>
-              </div>
-              <div class="welcome-icon">
-                <i data-lucide="user-check"></i>
-              </div>
-            </div>
-          </div>
-
-          <!-- Alerta de Fatura Atrasada -->
-          <div id="overdueAlert" class="overdue-alert" style="display: none;">
-            <div class="alert-content">
-              <div class="alert-icon">
-                <i data-lucide="alert-triangle"></i>
-              </div>
-              <div class="alert-text">
-                <h3>Fatura Atrasada</h3>
-                <p>Regularize para voltar a usar o sistema</p>
-              </div>
-            </div>
-            <button id="payNowButton" class="pay-now-button">
+    <div class="dashboard-container">
+      <header class="dashboard-header">
+        <div class="header-content">
+          <div class="header-left">
+            <div class="header-icon">
               <i data-lucide="credit-card"></i>
-              Pagar Agora
+            </div>
+            <h1 class="header-title">Sistema de Faturas</h1>
+          </div>
+          <div class="header-right">
+            <div class="user-info">
+              <i data-lucide="user"></i>
+              <span id="userName"></span>
+            </div>
+            <button class="logout-button" id="logoutButton">
+              <i data-lucide="log-out"></i>
+              Sair
             </button>
           </div>
+        </div>
+      </header>
+      
+      <main class="dashboard-main">
+        <!-- Seção de Boas-vindas -->
+        <div class="welcome-section">
+          <div class="welcome-card">
+            <div class="welcome-content">
+              <h2 id="welcomeMessage" class="welcome-title"></h2>
+              <p class="welcome-subtitle">Gerencie suas faturas e pagamentos</p>
+            </div>
+            <div class="welcome-icon">
+              <i data-lucide="user-check"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerta de Fatura Atrasada -->
+        <div id="overdueAlert" class="overdue-alert" style="display: none;">
+          <div class="alert-content">
+            <div class="alert-icon">
+              <i data-lucide="alert-triangle"></i>
+            </div>
+            <div class="alert-text">
+              <h3>Fatura Atrasada</h3>
+              <p>Regularize para voltar a usar o sistema</p>
+            </div>
+          </div>
+          <button id="payNowButton" class="pay-now-button">
+            <i data-lucide="credit-card"></i>
+            Pagar Agora
+          </button>
+        </div>
+      
+        <div id="loadingContainer" class="loading-container">
+          <div class="loading-spinner-large"></div>
+          <p class="loading-text">Carregando...</p>
+        </div>
         
-          <div id="loadingContainer" class="loading-container">
-            <div class="loading-spinner-large"></div>
-            <p class="loading-text">Carregando...</p>
+        <div id="dashboardContent" class="dashboard-content-mobile" style="display: none;">
+          <!-- 1. Informações da Fatura (Topo) -->
+          <div class="mobile-card invoice-card">
+            <div class="mobile-card-header">
+              <div class="mobile-card-icon">
+                <i data-lucide="calendar"></i>
+              </div>
+              <div class="mobile-card-title">
+                <h2>Informações da Fatura</h2>
+                <p>Detalhes do seu vencimento e pagamento</p>
+              </div>
+            </div>
+            <div class="mobile-card-content">
+              <div class="invoice-info-grid">
+                <div class="invoice-info-item">
+                  <div class="info-label">Data de Vencimento</div>
+                  <div class="info-value">
+                    <i data-lucide="clock"></i>
+                    <span id="dueDate"></span>
+                    <span id="overdueBadge" class="badge badge-overdue" style="display: none;">
+                      Vencido
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="invoice-info-item">
+                  <div class="info-label">Valor da Fatura</div>
+                  <div class="info-value amount-value">
+                    <i data-lucide="dollar-sign"></i>
+                    <span id="amount"></span>
+                  </div>
+                </div>
+                
+                <div class="invoice-info-item">
+                  <div class="info-label">Status do Pagamento</div>
+                  <div id="statusBadge" class="badge status-badge"></div>
+                </div>
+              </div>
+              
+              <button id="paymentButton" class="mobile-payment-button" style="display: none;">
+                <i data-lucide="external-link"></i>
+                <span class="button-text">Realizar Pagamento</span>
+              </button>
+              
+              <div id="lastPayment" class="last-payment-mobile" style="display: none;">
+                <div class="last-payment-label">Último Pagamento</div>
+                <div id="lastPaymentDate" class="last-payment-date"></div>
+              </div>
+            </div>
           </div>
           
-          <div id="dashboardContent" class="dashboard-grid" style="display: none;">
-            <div class="card">
-              <div class="card-header">
-                <h2 class="card-title">
-                  <i data-lucide="calendar"></i>
-                  Informações da Fatura
-                </h2>
-                <p class="card-description">Detalhes do seu vencimento e pagamento</p>
+          <!-- 2. Ver Meus Acessos da TV -->
+          <div class="mobile-card tv-access-card">
+            <div class="mobile-card-header">
+              <div class="mobile-card-icon tv-icon">
+                <i data-lucide="tv"></i>
               </div>
-              <div class="card-content">
-                <div class="invoice-grid">
-                  <div class="invoice-item">
-                    <span class="invoice-label">Data de Vencimento</span>
-                    <div class="invoice-value">
-                      <i data-lucide="clock"></i>
-                      <span id="dueDate"></span>
-                      <span id="overdueBadge" class="badge badge-overdue" style="display: none; margin-left: 8px;">
-                        Vencido
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div class="invoice-item">
-                    <span class="invoice-label">Valor da Fatura</span>
-                    <div class="invoice-value">
-                      <i data-lucide="dollar-sign"></i>
-                      <span id="amount"></span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="separator"></div>
-                
-                <div class="payment-section">
-                  <div class="status-info">
-                    <span class="invoice-label">Status do Pagamento</span>
-                    <div id="statusBadge" class="badge"></div>
-                  </div>
-                  
-                  <button id="paymentButton" class="payment-button" style="display: none;">
-                    <i data-lucide="external-link"></i>
-                    <span class="button-text">Realizar Pagamento</span>
-                  </button>
-                </div>
-                
-                <div id="lastPayment" class="last-payment" style="display: none;">
-                  <div class="last-payment-label">Último Pagamento</div>
-                  <div id="lastPaymentDate" class="last-payment-date"></div>
-                </div>
+              <div class="mobile-card-title">
+                <h2>Ver Meus Acessos da TV</h2>
+                <p>Informações sobre seu acesso aos canais</p>
               </div>
             </div>
-            
-            <div class="card">
-              <div class="card-header">
-                <h2 class="card-title">
-                  <i data-lucide="tv"></i>
-                  Ver Meu Acesso da TV
-                </h2>
-                <p class="card-description">Informações sobre seu acesso aos canais</p>
-              </div>
-              <div class="card-content">
-                <div class="system-features">
-                  <div class="feature-item">
+            <div class="mobile-card-content">
+              <div class="tv-features">
+                <div class="tv-feature-item">
+                  <div class="feature-icon">
                     <i data-lucide="check-circle"></i>
-                    Acesso liberado a todos os canais
                   </div>
-                  <div class="feature-item">
-                    <i data-lucide="check-circle"></i>
-                    Qualidade HD disponível
-                  </div>
-                  <div class="feature-item">
-                    <i data-lucide="check-circle"></i>
-                    Suporte técnico 24/7
-                  </div>
-                  <div class="feature-item">
-                    <i data-lucide="check-circle"></i>
-                    Atualizações automáticas de canais
+                  <div class="feature-text">
+                    <strong>Acesso Total</strong>
+                    <span>Liberado a todos os canais</span>
                   </div>
                 </div>
                 
-                <!-- Seção de Observações do Admin -->
-                <div id="adminObservations" class="admin-observations" style="display: none;">
-                  <div class="separator"></div>
-                  <div class="observations-section">
-                    <h4 class="observations-title">
-                      <i data-lucide="message-circle"></i>
-                      Informações Importantes
-                    </h4>
-                    <div id="observationsContent" class="observations-content"></div>
+                <div class="tv-feature-item">
+                  <div class="feature-icon">
+                    <i data-lucide="hd"></i>
+                  </div>
+                  <div class="feature-text">
+                    <strong>Qualidade HD</strong>
+                    <span>Disponível em alta definição</span>
+                  </div>
+                </div>
+                
+                <div class="tv-feature-item">
+                  <div class="feature-icon">
+                    <i data-lucide="headphones"></i>
+                  </div>
+                  <div class="feature-text">
+                    <strong>Suporte 24/7</strong>
+                    <span>Atendimento técnico sempre disponível</span>
+                  </div>
+                </div>
+                
+                <div class="tv-feature-item">
+                  <div class="feature-icon">
+                    <i data-lucide="refresh-cw"></i>
+                  </div>
+                  <div class="feature-text">
+                    <strong>Atualizações</strong>
+                    <span>Canais atualizados automaticamente</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </main>
-      </div>
-    `
+          
+          <!-- 3. Informações Importantes -->
+          <div id="importantInfoCard" class="mobile-card important-info-card" style="display: none;">
+            <div class="mobile-card-header">
+              <div class="mobile-card-icon important-icon">
+                <i data-lucide="message-circle"></i>
+              </div>
+              <div class="mobile-card-title">
+                <h2>Informações Importantes</h2>
+                <p>Avisos e observações do administrador</p>
+              </div>
+            </div>
+            <div class="mobile-card-content">
+              <div id="importantInfoContent" class="important-info-content"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  `
   },
 
   loadUserData: async () => {
@@ -574,13 +603,13 @@ const dashboardPage = {
 
     if (!supabase) {
       document.getElementById("loadingContainer").innerHTML = `
-        <div class="error-container">
-          <div class="error-icon">⚠️</div>
-          <h3>Erro de Conexão</h3>
-          <p>Não foi possível conectar com o banco de dados.</p>
-          <p>Verifique se o Supabase está configurado corretamente.</p>
-        </div>
-      `
+      <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h3>Erro de Conexão</h3>
+        <p>Não foi possível conectar com o banco de dados.</p>
+        <p>Verifique se o Supabase está configurado corretamente.</p>
+      </div>
+    `
       return
     }
 
@@ -648,7 +677,7 @@ const dashboardPage = {
         paymentButton.style.display = "flex"
     }
 
-    statusBadge.className = `badge ${statusClass}`
+    statusBadge.className = `badge ${statusClass} status-badge`
     statusBadge.innerHTML = `<i data-lucide="${statusIcon}"></i>${statusText}`
 
     // Último pagamento
@@ -657,23 +686,20 @@ const dashboardPage = {
       document.getElementById("lastPaymentDate").textContent = utils.formatDateTime(userData.lastPayment)
     }
 
-    // Mostrar conteúdo
-    document.getElementById("loadingContainer").style.display = "none"
-    document.getElementById("dashboardContent").style.display = "grid"
-
-    // Armazenar dados para uso no botão de pagamento
-    window.currentUserData = userData
-
-    // Mostrar observações do admin se existirem
-    const adminObservationsSection = document.getElementById("adminObservations")
-    const observationsContent = document.getElementById("observationsContent")
+    // Mostrar informações importantes se existirem
+    const importantInfoCard = document.getElementById("importantInfoCard")
+    const importantInfoContent = document.getElementById("importantInfoContent")
 
     if (userData.observations && userData.observations.trim()) {
-      observationsContent.textContent = userData.observations
-      adminObservationsSection.style.display = "block"
+      importantInfoContent.textContent = userData.observations
+      importantInfoCard.style.display = "block"
     } else {
-      adminObservationsSection.style.display = "none"
+      importantInfoCard.style.display = "none"
     }
+
+    // Mostrar conteúdo
+    document.getElementById("loadingContainer").style.display = "none"
+    document.getElementById("dashboardContent").style.display = "block"
 
     // Recriar ícones
     if (window.lucide && window.lucide.createIcons) {
