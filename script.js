@@ -524,25 +524,41 @@ const dashboardPage = {
             
             <div class="card">
               <div class="card-header">
-                <h2 class="card-title">Sistema Automático</h2>
+                <h2 class="card-title">
+                  <i data-lucide="tv"></i>
+                  Qualidade Garantida
+                </h2>
+                <p class="card-description">Informações sobre seu acesso aos canais</p>
               </div>
               <div class="card-content">
                 <div class="system-features">
                   <div class="feature-item">
                     <i data-lucide="check-circle"></i>
-                    Redirecionamento para pagamento externo
+                    Acesso liberado a todos os canais
                   </div>
                   <div class="feature-item">
                     <i data-lucide="check-circle"></i>
-                    Atualização de vencimento no dia 1º
+                    Qualidade HD disponível
                   </div>
                   <div class="feature-item">
                     <i data-lucide="check-circle"></i>
-                    Vencimento sempre no dia 10
+                    Suporte técnico 24/7
                   </div>
                   <div class="feature-item">
                     <i data-lucide="check-circle"></i>
-                    Controle administrativo de pagamentos
+                    Atualizações automáticas de canais
+                  </div>
+                </div>
+                
+                <!-- Seção de Observações do Admin -->
+                <div id="adminObservations" class="admin-observations" style="display: none;">
+                  <div class="separator"></div>
+                  <div class="observations-section">
+                    <h4 class="observations-title">
+                      <i data-lucide="message-circle"></i>
+                      Ver Meu Acesso da TV:
+                    </h4>
+                    <div id="observationsContent" class="observations-content"></div>
                   </div>
                 </div>
               </div>
@@ -644,6 +660,20 @@ const dashboardPage = {
     // Mostrar conteúdo
     document.getElementById("loadingContainer").style.display = "none"
     document.getElementById("dashboardContent").style.display = "grid"
+
+    // Armazenar dados para uso no botão de pagamento
+    window.currentUserData = userData
+
+    // Mostrar observações do admin se existirem
+    const adminObservationsSection = document.getElementById("adminObservations")
+    const observationsContent = document.getElementById("observationsContent")
+
+    if (userData.observations && userData.observations.trim()) {
+      observationsContent.textContent = userData.observations
+      adminObservationsSection.style.display = "block"
+    } else {
+      adminObservationsSection.style.display = "none"
+    }
 
     // Recriar ícones
     if (window.lucide && window.lucide.createIcons) {
