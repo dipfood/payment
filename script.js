@@ -526,7 +526,7 @@ const dashboardPage = {
               <div class="card-header">
                 <h2 class="card-title">
                   <i data-lucide="tv"></i>
-                  Qualidade Garantida
+                  Ver Meu Acesso da TV
                 </h2>
                 <p class="card-description">Informações sobre seu acesso aos canais</p>
               </div>
@@ -556,7 +556,7 @@ const dashboardPage = {
                   <div class="observations-section">
                     <h4 class="observations-title">
                       <i data-lucide="message-circle"></i>
-                      Ver Meu Acesso da TV:
+                      Informações Importantes
                     </h4>
                     <div id="observationsContent" class="observations-content"></div>
                   </div>
