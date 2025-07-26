@@ -1,6 +1,7 @@
 // Configuração do Supabase usando variáveis de ambiente
 const supabaseUrl = "https://nvrqxhwkcvycxhndhbft.supabase.co"
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52cnF4aHdrY3Z5Y3hobmRoYmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODQ2MzYsImV4cCI6MjA2OTA2MDYzNn0.WJB5zOX6lFuwLAdp7Dw5RW5wPaNBwP5cuxJKaAVMyLE"
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52cnF4aHdrY3Z5Y3hobmRoYmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODQ2MzYsImV4cCI6MjA2OTA2MDYzNn0.WJB5zOX6lFuwLAdp7Dw5RW5wPaNBwP5cuxJKaAVMyLE"
 
 // Inicializar cliente Supabase
 let supabase = null
@@ -434,6 +435,36 @@ const dashboardPage = {
         </header>
         
         <main class="dashboard-main">
+          <!-- Seção de Boas-vindas -->
+          <div class="welcome-section">
+            <div class="welcome-card">
+              <div class="welcome-content">
+                <h2 id="welcomeMessage" class="welcome-title"></h2>
+                <p class="welcome-subtitle">Gerencie suas faturas e pagamentos</p>
+              </div>
+              <div class="welcome-icon">
+                <i data-lucide="user-check"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alerta de Fatura Atrasada -->
+          <div id="overdueAlert" class="overdue-alert" style="display: none;">
+            <div class="alert-content">
+              <div class="alert-icon">
+                <i data-lucide="alert-triangle"></i>
+              </div>
+              <div class="alert-text">
+                <h3>Fatura Atrasada</h3>
+                <p>Regularize para voltar a usar o sistema</p>
+              </div>
+            </div>
+            <button id="payNowButton" class="pay-now-button">
+              <i data-lucide="credit-card"></i>
+              Pagar Agora
+            </button>
+          </div>
+        
           <div id="loadingContainer" class="loading-container">
             <div class="loading-spinner-large"></div>
             <p class="loading-text">Carregando...</p>
@@ -549,6 +580,26 @@ const dashboardPage = {
 
     // Atualizar interface
     document.getElementById("userName").textContent = userData.name
+
+    // Atualizar mensagem de boas-vindas
+    const firstName = userData.name.split(" ")[0]
+    document.getElementById("welcomeMessage").textContent = `Olá ${firstName}, Bem Vindo(a)!`
+
+    // Verificar se está atrasado e mostrar alerta
+    const overdueAlert = document.getElementById("overdueAlert")
+    const payNowButton = document.getElementById("payNowButton")
+
+    if (userData.status === "overdue") {
+      overdueAlert.style.display = "flex"
+
+      // Configurar botão de pagamento do alerta
+      payNowButton.addEventListener("click", async () => {
+        await paymentSystem.redirectToPayment(userData.id, userData.amount)
+      })
+    } else {
+      overdueAlert.style.display = "none"
+    }
+
     document.getElementById("dueDate").textContent = utils.formatDate(userData.dueDate)
     document.getElementById("amount").textContent = utils.formatCurrency(userData.amount)
 
